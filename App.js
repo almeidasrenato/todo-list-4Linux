@@ -7,19 +7,55 @@ import {
   SafeAreaView,
   Platform,
   TextInput,
-  Button,
   FlatList,
   TouchableOpacity,
+
   //Pressable
 } from 'react-native'
 
 import uuid from 'react-native-uuid'
 
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
+import { SvgXml } from 'react-native-svg'
+import {
+  addIcon,
+  removeIcon,
+  checkBoxDisabledIcon,
+  checkBoxEnabledIcon,
+} from './src/assets/svg/'
+
 export default function App() {
   const [taskName, onChangeTaskName] = React.useState('')
   const [task, onChangeTask] = React.useState([])
 
-  const addTask = (taskName) => {
+  const [getStoreData, onChangeGetStoreData] = React.useState(false)
+
+  const storeData = async (value) => {
+    try {
+      const jsonValue = JSON.stringify(value)
+      await AsyncStorage.setItem('@taskList', jsonValue)
+    } catch (e) {
+      // saving error
+    }
+  }
+
+  const getData = async () => {
+    if (!getStoreData) {
+      try {
+        const jsonValue = await AsyncStorage.getItem('@taskList')
+
+        onChangeGetStoreData(true)
+        return onChangeTask(jsonValue != null ? JSON.parse(jsonValue) : [])
+      } catch (e) {
+        // error reading value
+      }
+    }
+  }
+
+  getData()
+
+  const addTask = async (taskName) => {
     let taskObject = {
       id: uuid.v4(),
       name: taskName,
@@ -28,15 +64,19 @@ export default function App() {
 
     onChangeTaskName('')
     onChangeTask([...task, taskObject])
+
+    await storeData([...task, taskObject])
   }
 
-  const removeTask = (taskId) => {
+  const removeTask = async (taskId) => {
     var newTaskList = task.filter((item) => item.id !== taskId)
 
     onChangeTask(newTaskList)
+
+    await storeData(newTaskList)
   }
 
-  const changeStatusTask = (taskId) => {
+  const changeStatusTask = async (taskId) => {
     let newTaskList = task.map((item) => {
       return {
         ...item,
@@ -45,22 +85,27 @@ export default function App() {
     })
 
     onChangeTask(newTaskList)
+    await storeData(newTaskList)
   }
 
   const renderTaskList = ({ item }) => (
     <TouchableOpacity onPress={() => changeStatusTask(item.id)}>
       <View style={styles.taskCard}>
         {item.complete ? (
+          <SvgXml xml={checkBoxEnabledIcon()} width='30' height='30' />
+        ) : (
+          <SvgXml xml={checkBoxDisabledIcon()} width='30' height='30' />
+        )}
+
+        {item.complete ? (
           <Text style={styles.titleTaskCardLine}>{item.name}</Text>
         ) : (
           <Text style={styles.titleTaskCard}>{item.name}</Text>
         )}
 
-        <Button
-          onPress={() => removeTask(item.id)}
-          title='Remover'
-          color='#F56D5B'
-        />
+        <TouchableOpacity onPress={() => removeTask(item.id)}>
+          <SvgXml xml={removeIcon()} width='30' height='30' />
+        </TouchableOpacity>
       </View>
     </TouchableOpacity>
   )
@@ -68,6 +113,7 @@ export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style='auto' />
+
       <View style={styles.todoField}>
         <Text style={styles.textTask}>Tarefas</Text>
 
@@ -90,12 +136,13 @@ export default function App() {
               placeholder='Digite a Tarefa'
             />
 
-            <Button
-              onPress={() => addTask(taskName)}
-              title='Add'
-              color='#1499EF'
-              disabled={taskName === '' ? true : false}
-            />
+            <TouchableOpacity onPress={() => addTask(taskName)}>
+              <SvgXml
+                xml={addIcon(taskName === '' ? true : false)}
+                width='30'
+                height='30'
+              />
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -136,9 +183,13 @@ const styles = StyleSheet.create({
   },
   titleTaskCard: {
     flex: 1,
+    paddingLeft: 8,
+    color: '#3E536B',
   },
   titleTaskCardLine: {
     flex: 1,
+    paddingLeft: 8,
+    color: '#3E536B',
     textDecorationLine: 'line-through',
     textDecorationStyle: 'solid',
     textDecorationColor: '#000',
