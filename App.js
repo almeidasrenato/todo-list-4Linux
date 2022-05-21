@@ -9,6 +9,7 @@ import {
   TextInput,
   FlatList,
   TouchableOpacity,
+  KeyboardAvoidingView,
 
   //Pressable
 } from 'react-native'
@@ -112,40 +113,47 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style='auto' />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : ''}
+        style={{ flex: 1 }}
+      >
+        <StatusBar style='auto' />
 
-      <View style={styles.todoField}>
-        <Text style={styles.textTask}>Tarefas</Text>
+        <View style={styles.todoField}>
+          <Text style={styles.textTask}>Tarefas</Text>
 
-        {/* Field Tasks List */}
-        <View style={styles.taskListField}>
-          <FlatList
-            data={task}
-            renderItem={renderTaskList}
-            keyExtractor={(item) => item.id}
-          />
-        </View>
-
-        {/* Add Task Field */}
-        <View style={styles.addTaskField}>
-          <View style={styles.inputTextAndButtonField}>
-            <TextInput
-              style={styles.input}
-              onChangeText={onChangeTaskName}
-              value={taskName}
-              placeholder='Digite a Tarefa'
+          {/* Field Tasks List */}
+          <View style={styles.taskListField}>
+            <FlatList
+              data={task}
+              renderItem={renderTaskList}
+              keyExtractor={(item) => item.id}
             />
+          </View>
 
-            <TouchableOpacity onPress={() => addTask(taskName)}>
-              <SvgXml
-                xml={addIcon(taskName === '' ? true : false)}
-                width='30'
-                height='30'
+          {/* Add Task Field */}
+          <View style={styles.addTaskField}>
+            <View style={styles.inputTextAndButtonField}>
+              <TextInput
+                style={styles.input}
+                onChangeText={onChangeTaskName}
+                value={taskName}
+                placeholder='Digite a Tarefa'
               />
-            </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => (taskName === '' ? null : addTask(taskName))}
+              >
+                <SvgXml
+                  xml={addIcon(taskName === '' ? true : false)}
+                  width='30'
+                  height='30'
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   )
 }
