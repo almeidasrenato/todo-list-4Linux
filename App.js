@@ -1,5 +1,6 @@
-import { StatusBar } from 'expo-status-bar'
-import React from 'react'
+/* eslint-disable no-use-before-define */
+import { StatusBar } from 'expo-status-bar';
+import React from 'react';
 import {
   StyleSheet,
   Text,
@@ -11,91 +12,85 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
 
-  //Pressable
-} from 'react-native'
+  // Pressable
+} from 'react-native';
 
-import uuid from 'react-native-uuid'
+import uuid from 'react-native-uuid';
 
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { SvgXml } from 'react-native-svg'
-import {
-  addIcon,
-  removeIcon,
-  checkBoxDisabledIcon,
-  checkBoxEnabledIcon,
-} from './src/assets/svg/'
+import { SvgXml } from 'react-native-svg';
+import { addIcon, removeIcon, checkBoxDisabledIcon, checkBoxEnabledIcon } from './src/assets/svg';
 
 export default function App() {
-  const [taskName, onChangeTaskName] = React.useState('')
-  const [task, onChangeTask] = React.useState([])
+  const [taskName, onChangeTaskName] = React.useState('');
+  const [task, onChangeTask] = React.useState([]);
 
-  const [getStoreData, onChangeGetStoreData] = React.useState(false)
+  const [getStoreData, onChangeGetStoreData] = React.useState(false);
 
   const storeData = async (value) => {
     try {
-      const jsonValue = JSON.stringify(value)
-      await AsyncStorage.setItem('@taskList', jsonValue)
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem('@taskList', jsonValue);
     } catch (e) {
       // saving error
     }
-  }
+  };
 
   const getData = async () => {
     if (!getStoreData) {
       try {
-        const jsonValue = await AsyncStorage.getItem('@taskList')
+        const jsonValue = await AsyncStorage.getItem('@taskList');
 
-        onChangeGetStoreData(true)
-        return onChangeTask(jsonValue != null ? JSON.parse(jsonValue) : [])
+        onChangeGetStoreData(true);
+        return onChangeTask(jsonValue != null ? JSON.parse(jsonValue) : []);
       } catch (e) {
         // error reading value
       }
     }
-  }
+    return [];
+  };
 
-  getData()
+  getData();
 
-  const addTask = async (taskName) => {
-    let taskObject = {
+  const addTask = async (taskNameProp) => {
+    const taskObject = {
       id: uuid.v4(),
-      name: taskName,
+      name: taskNameProp,
       complete: false,
-    }
+    };
 
-    onChangeTaskName('')
-    onChangeTask([...task, taskObject])
+    onChangeTaskName('');
+    onChangeTask([...task, taskObject]);
 
-    await storeData([...task, taskObject])
-  }
+    await storeData([...task, taskObject]);
+  };
 
   const removeTask = async (taskId) => {
-    var newTaskList = task.filter((item) => item.id !== taskId)
+    const newTaskList = task.filter((item) => item.id !== taskId);
 
-    onChangeTask(newTaskList)
+    onChangeTask(newTaskList);
 
-    await storeData(newTaskList)
-  }
+    await storeData(newTaskList);
+  };
 
   const changeStatusTask = async (taskId) => {
-    let newTaskList = task.map((item) => {
-      return {
-        ...item,
-        complete: taskId === item.id ? !item.complete : item.complete,
-      }
-    })
+    const newTaskList = task.map((item) => ({
+      ...item,
+      complete: taskId === item.id ? !item.complete : item.complete,
+    }));
 
-    onChangeTask(newTaskList)
-    await storeData(newTaskList)
-  }
+    onChangeTask(newTaskList);
+    await storeData(newTaskList);
+  };
 
   const renderTaskList = ({ item }) => (
     <TouchableOpacity onPress={() => changeStatusTask(item.id)}>
       <View style={styles.taskCard}>
         {item.complete ? (
-          <SvgXml xml={checkBoxEnabledIcon()} width='30' height='30' />
+          <SvgXml xml={checkBoxEnabledIcon()} width="30" height="30" />
         ) : (
-          <SvgXml xml={checkBoxDisabledIcon()} width='30' height='30' />
+          <SvgXml xml={checkBoxDisabledIcon()} width="30" height="30" />
         )}
 
         {item.complete ? (
@@ -105,30 +100,23 @@ export default function App() {
         )}
 
         <TouchableOpacity onPress={() => removeTask(item.id)}>
-          <SvgXml xml={removeIcon()} width='30' height='30' />
+          <SvgXml xml={removeIcon()} width="30" height="30" />
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
-  )
+  );
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : ''}
-        style={{ flex: 1 }}
-      >
-        <StatusBar style='auto' />
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : ''} style={{ flex: 1 }}>
+        <StatusBar style="auto" />
 
         <View style={styles.todoField}>
           <Text style={styles.textTask}>Tarefas</Text>
 
           {/* Field Tasks List */}
           <View style={styles.taskListField}>
-            <FlatList
-              data={task}
-              renderItem={renderTaskList}
-              keyExtractor={(item) => item.id}
-            />
+            <FlatList data={task} renderItem={renderTaskList} keyExtractor={(item) => item.id} />
           </View>
 
           {/* Add Task Field */}
@@ -138,24 +126,18 @@ export default function App() {
                 style={styles.input}
                 onChangeText={onChangeTaskName}
                 value={taskName}
-                placeholder='Digite a Tarefa'
+                placeholder="Digite a Tarefa"
               />
 
-              <TouchableOpacity
-                onPress={() => (taskName === '' ? null : addTask(taskName))}
-              >
-                <SvgXml
-                  xml={addIcon(taskName === '' ? true : false)}
-                  width='30'
-                  height='30'
-                />
+              <TouchableOpacity onPress={() => (taskName === '' ? null : addTask(taskName))}>
+                <SvgXml xml={addIcon(taskName === '')} width="30" height="30" />
               </TouchableOpacity>
             </View>
           </View>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -203,7 +185,7 @@ const styles = StyleSheet.create({
     textDecorationColor: '#000',
   },
 
-  //Field addTask
+  // Field addTask
   textTask: {
     fontSize: 34,
     fontWeight: '500',
@@ -240,4 +222,4 @@ const styles = StyleSheet.create({
     height: 40,
     padding: 10,
   },
-})
+});
