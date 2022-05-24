@@ -26,7 +26,7 @@ export default function App() {
   const [taskName, onChangeTaskName] = React.useState('');
   const [task, onChangeTask] = React.useState([]);
 
-  const [getStoreData, onChangeGetStoreData] = React.useState(false);
+  // const [getStoreData, onChangeGetStoreData] = React.useState(false);
 
   const storeData = async (value) => {
     try {
@@ -38,20 +38,14 @@ export default function App() {
   };
 
   const getData = async () => {
-    if (!getStoreData) {
-      try {
-        const jsonValue = await AsyncStorage.getItem('@taskList');
+    const jsonValue = await AsyncStorage.getItem('@taskList');
 
-        onChangeGetStoreData(true);
-        return onChangeTask(jsonValue != null ? JSON.parse(jsonValue) : []);
-      } catch (e) {
-        // error reading value
-      }
-    }
-    return [];
+    return onChangeTask(jsonValue != null ? JSON.parse(jsonValue) : []);
   };
 
-  getData();
+  React.useEffect(() => {
+    getData();
+  }, []);
 
   const addTask = async (taskNameProp) => {
     const taskObject = {
