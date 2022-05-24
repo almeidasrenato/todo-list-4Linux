@@ -116,29 +116,13 @@ function Tasks() {
     );
   };
 
-  const AddTaskRender = () => {
-    const CustomButtonAddTask = () => (
-      <TouchableOpacity
-        onPress={() => (taskName === "" ? null : addTask(taskName))}
-      >
-        <SvgXml xml={addIcon(taskName === "")} width="30" height="30" />
-      </TouchableOpacity>
-    );
-
-    return (
-      <View style={styleAddTask.addTaskField}>
-        <View style={styleAddTask.inputTextAndButtonField}>
-          <TextInput
-            style={styleAddTask.input}
-            onChangeText={onChangeTaskName}
-            value={taskName}
-            placeholder="Digite a Tarefa"
-          />
-          <CustomButtonAddTask />
-        </View>
-      </View>
-    );
-  };
+  const CustomButtonAddTask = () => (
+    <TouchableOpacity
+      onPress={() => (taskName === "" ? null : addTask(taskName))}
+    >
+      <SvgXml xml={addIcon(taskName === "")} width="30" height="30" />
+    </TouchableOpacity>
+  );
 
   return (
     <KeyboardAvoidingView
@@ -148,7 +132,18 @@ function Tasks() {
       <View style={styles.todoField}>
         <TitleRender />
         <TaskListRender />
-        <AddTaskRender />
+
+        <View style={styleAddTask.addTaskField}>
+          <View style={styleAddTask.inputTextAndButtonField}>
+            <TextInput
+              style={styleAddTask.input}
+              onChangeText={onChangeTaskName}
+              value={taskName}
+              placeholder="Digite a Tarefa"
+            />
+            <CustomButtonAddTask />
+          </View>
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -175,7 +170,10 @@ const styleTitle = StyleSheet.create({
 const styleTaskList = StyleSheet.create({
   taskListField: {
     flex: 1,
-    padding: 32,
+    paddingLeft: 32,
+    paddingRight: 32,
+    paddingTop: 16,
+    paddingBottom: 16,
     width: "100%",
   },
   taskCard: {
@@ -207,7 +205,10 @@ const styleTaskList = StyleSheet.create({
 
 const styleAddTask = StyleSheet.create({
   addTaskField: {
-    padding: 32,
+    paddingLeft: 32,
+    paddingRight: 32,
+    paddingTop: 16,
+    paddingBottom: 16,
   },
   inputTextAndButtonField: {
     alignItems: "center",
