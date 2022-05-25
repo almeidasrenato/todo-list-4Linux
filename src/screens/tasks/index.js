@@ -5,34 +5,41 @@ import {
   Text,
   View,
   Platform,
-  TextInput,
   FlatList,
   TouchableOpacity,
+  TouchableHighlight,
   KeyboardAvoidingView,
   // Pressable
 } from "react-native";
 
 import { SvgXml } from "react-native-svg";
 import {
-  addIcon,
+  addButton,
   removeIcon,
   checkBoxDisabledIcon,
   checkBoxEnabledIcon,
 } from "../../assets/svg";
 
-import uuid from "react-native-uuid";
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-function Tasks() {
-  const [taskName, onChangeTaskName] = React.useState("");
+import { useNavigation } from "@react-navigation/native";
+
+function Tasks({ route }) {
   const [task, onChangeTask] = React.useState([]);
 
+  const navigation = useNavigation();
+
   React.useEffect(() => {
-    getData();
+    getTasksData();
   }, []);
 
-  const storeData = async (value) => {
+  const getTasksData = async () => {
+    const jsonValue = await AsyncStorage.getItem("@taskList");
+
+    return onChangeTask(jsonValue != null ? JSON.parse(jsonValue) : []);
+  };
+
+  const storeTaskData = async (value) => {
     try {
       const jsonValue = JSON.stringify(value);
       await AsyncStorage.setItem("@taskList", jsonValue);
@@ -41,31 +48,23 @@ function Tasks() {
     }
   };
 
-  const getData = async () => {
-    const jsonValue = await AsyncStorage.getItem("@taskList");
-
-    return onChangeTask(jsonValue != null ? JSON.parse(jsonValue) : []);
-  };
-
-  const addTask = async (taskNameProp) => {
-    const taskObject = {
-      id: uuid.v4(),
-      name: taskNameProp,
-      complete: false,
-    };
-
-    onChangeTaskName("");
+  const addTask = async (taskObject) => {
     onChangeTask([...task, taskObject]);
 
-    await storeData([...task, taskObject]);
+    return await storeTaskData([...task, taskObject]);
   };
+
+  if (route.params) {
+    addTask(route.params.newTask);
+    route.params = undefined;
+  }
 
   const removeTask = async (taskId) => {
     const newTaskList = task.filter((item) => item.id !== taskId);
 
     onChangeTask(newTaskList);
 
-    await storeData(newTaskList);
+    await storeTaskData(newTaskList);
   };
 
   const changeStatusTask = async (taskId) => {
@@ -75,7 +74,7 @@ function Tasks() {
     }));
 
     onChangeTask(newTaskList);
-    await storeData(newTaskList);
+    await storeTaskData(newTaskList);
   };
 
   const TitleRender = () => (
@@ -116,12 +115,17 @@ function Tasks() {
     );
   };
 
-  const CustomButtonAddTask = () => (
-    <TouchableOpacity
-      onPress={() => (taskName === "" ? null : addTask(taskName))}
-    >
-      <SvgXml xml={addIcon(taskName === "")} width="30" height="30" />
-    </TouchableOpacity>
+  const AddTaskButton = () => (
+    <View style={styleAddTaskButton.button}>
+      <TouchableHighlight
+        style={styleAddTaskButton.button}
+        activeOpacity={0.6}
+        underlayColor="#DDDDDD"
+        onPress={() => navigation.navigate("AddTask")}
+      >
+        <SvgXml xml={addButton()} width="60" height="60" />
+      </TouchableHighlight>
+    </View>
   );
 
   return (
@@ -132,18 +136,7 @@ function Tasks() {
       <View style={styles.todoField}>
         <TitleRender />
         <TaskListRender />
-
-        <View style={styleAddTask.addTaskField}>
-          <View style={styleAddTask.inputTextAndButtonField}>
-            <TextInput
-              style={styleAddTask.input}
-              onChangeText={onChangeTaskName}
-              value={taskName}
-              placeholder="Digite a Tarefa"
-            />
-            <CustomButtonAddTask />
-          </View>
-        </View>
+        <AddTaskButton />
       </View>
     </KeyboardAvoidingView>
   );
@@ -154,6 +147,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
     width: "100%",
+    backgroundColor: "#FAF6F5",
   },
 });
 
@@ -203,23 +197,13 @@ const styleTaskList = StyleSheet.create({
   },
 });
 
-const styleAddTask = StyleSheet.create({
-  addTaskField: {
-    paddingLeft: 32,
-    paddingRight: 32,
-    paddingTop: 16,
-    paddingBottom: 16,
-  },
-  inputTextAndButtonField: {
-    alignItems: "center",
+const styleAddTaskButton = StyleSheet.create({
+  button: {
     backgroundColor: "#fff",
-    borderColor: "#C9C9C9",
-    borderRadius: 8,
-    borderWidth: 1,
-    elevation: 4,
-    flexDirection: "row",
-
-    paddingRight: 10,
+    borderRadius: 60 / 2,
+    position: "absolute",
+    bottom: 20,
+    right: 20,
 
     shadowColor: "#000000",
     shadowOffset: {
@@ -228,12 +212,7 @@ const styleAddTask = StyleSheet.create({
     },
     shadowOpacity: 0.17,
     shadowRadius: 3.05,
-    width: "100%",
-  },
-  input: {
-    flex: 1,
-    height: 40,
-    padding: 10,
+    elevation: 4,
   },
 });
 

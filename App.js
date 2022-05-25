@@ -2,13 +2,13 @@ import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { StyleSheet, SafeAreaView, Platform } from "react-native";
 
-import Tasks from "./src/screens/tasks";
+import { AppRoutes } from "./src/routes";
 
 export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar />
-      <Tasks />
+      <AppRoutes />
     </SafeAreaView>
   );
 }
