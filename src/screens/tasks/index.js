@@ -1,4 +1,3 @@
-/* eslint-disable no-use-before-define */
 import React from "react";
 import {
   StyleSheet,
@@ -32,6 +31,12 @@ function Tasks() {
     getData();
   }, []);
 
+  const getData = async () => {
+    const jsonValue = await AsyncStorage.getItem("@taskList");
+
+    return onChangeTask(jsonValue != null ? JSON.parse(jsonValue) : []);
+  };
+
   const storeData = async (value) => {
     try {
       const jsonValue = JSON.stringify(value);
@@ -39,12 +44,6 @@ function Tasks() {
     } catch (e) {
       // saving error
     }
-  };
-
-  const getData = async () => {
-    const jsonValue = await AsyncStorage.getItem("@taskList");
-
-    return onChangeTask(jsonValue != null ? JSON.parse(jsonValue) : []);
   };
 
   const addTask = async (taskNameProp) => {
@@ -78,49 +77,25 @@ function Tasks() {
     await storeData(newTaskList);
   };
 
-  const TitleRender = () => (
-    <Text style={styleTitle.textTask}>{"Tarefas"}</Text>
-  );
+  const renderTaskListCard = ({ item }) => (
+    <TouchableOpacity onPress={() => changeStatusTask(item.id)}>
+      <View style={styleTaskList.taskCard}>
+        {item.complete ? (
+          <SvgXml xml={checkBoxEnabledIcon()} width="30" height="30" />
+        ) : (
+          <SvgXml xml={checkBoxDisabledIcon()} width="30" height="30" />
+        )}
 
-  const TaskListRender = () => {
-    const renderTaskListCard = ({ item }) => (
-      <TouchableOpacity onPress={() => changeStatusTask(item.id)}>
-        <View style={styleTaskList.taskCard}>
-          {item.complete ? (
-            <SvgXml xml={checkBoxEnabledIcon()} width="30" height="30" />
-          ) : (
-            <SvgXml xml={checkBoxDisabledIcon()} width="30" height="30" />
-          )}
+        {item.complete ? (
+          <Text style={styleTaskList.titleTaskCardLine}>{item.name}</Text>
+        ) : (
+          <Text style={styleTaskList.titleTaskCard}>{item.name}</Text>
+        )}
 
-          {item.complete ? (
-            <Text style={styleTaskList.titleTaskCardLine}>{item.name}</Text>
-          ) : (
-            <Text style={styleTaskList.titleTaskCard}>{item.name}</Text>
-          )}
-
-          <TouchableOpacity onPress={() => removeTask(item.id)}>
-            <SvgXml xml={removeIcon()} width="30" height="30" />
-          </TouchableOpacity>
-        </View>
-      </TouchableOpacity>
-    );
-
-    return (
-      <View style={styleTaskList.taskListField}>
-        <FlatList
-          data={task}
-          renderItem={renderTaskListCard}
-          keyExtractor={(item) => item.id}
-        />
+        <TouchableOpacity onPress={() => removeTask(item.id)}>
+          <SvgXml xml={removeIcon()} width="30" height="30" />
+        </TouchableOpacity>
       </View>
-    );
-  };
-
-  const CustomButtonAddTask = () => (
-    <TouchableOpacity
-      onPress={() => (taskName === "" ? null : addTask(taskName))}
-    >
-      <SvgXml xml={addIcon(taskName === "")} width="30" height="30" />
     </TouchableOpacity>
   );
 
@@ -130,8 +105,15 @@ function Tasks() {
       style={{ flex: 1 }}
     >
       <View style={styles.todoField}>
-        <TitleRender />
-        <TaskListRender />
+        <Text style={styleTitle.textTask}>{"Tarefas"}</Text>
+
+        <View style={styleTaskList.taskListField}>
+          <FlatList
+            data={task}
+            renderItem={renderTaskListCard}
+            keyExtractor={(item) => item.id}
+          />
+        </View>
 
         <View style={styleAddTask.addTaskField}>
           <View style={styleAddTask.inputTextAndButtonField}>
@@ -139,9 +121,14 @@ function Tasks() {
               style={styleAddTask.input}
               onChangeText={onChangeTaskName}
               value={taskName}
-              placeholder="Digite a Tarefa"
+              placeholder="Digite a tarefa"
             />
-            <CustomButtonAddTask />
+
+            <TouchableOpacity
+              onPress={() => (taskName === "" ? null : addTask(taskName))}
+            >
+              <SvgXml xml={addIcon(taskName === "")} width="30" height="30" />
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -152,6 +139,10 @@ function Tasks() {
 const styles = StyleSheet.create({
   todoField: {
     alignItems: "center",
+
+    paddingLeft: 32,
+    paddingRight: 32,
+
     flex: 1,
     width: "100%",
   },
@@ -164,16 +155,13 @@ const styleTitle = StyleSheet.create({
     fontWeight: "500",
     padding: 4,
     paddingTop: 16,
+    paddingBottom: 16,
   },
 });
 
 const styleTaskList = StyleSheet.create({
   taskListField: {
     flex: 1,
-    paddingLeft: 32,
-    paddingRight: 32,
-    paddingTop: 16,
-    paddingBottom: 16,
     width: "100%",
   },
   taskCard: {
@@ -204,12 +192,7 @@ const styleTaskList = StyleSheet.create({
 });
 
 const styleAddTask = StyleSheet.create({
-  addTaskField: {
-    paddingLeft: 32,
-    paddingRight: 32,
-    paddingTop: 16,
-    paddingBottom: 16,
-  },
+  addTaskField: {},
   inputTextAndButtonField: {
     alignItems: "center",
     backgroundColor: "#fff",
