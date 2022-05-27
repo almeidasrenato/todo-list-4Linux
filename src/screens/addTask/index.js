@@ -1,5 +1,12 @@
 import React from "react";
-import { StyleSheet, Text, View, TextInput, Button } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Button,
+  ScrollView,
+} from "react-native";
 
 import DropDownPicker from "react-native-dropdown-picker";
 
@@ -39,50 +46,52 @@ function AddTask() {
     <View style={styles.container}>
       <Text style={styleTitle.textTask}>{"Nova Tarefa"}</Text>
       <View style={styles.todoField}>
-        <View style={styleCard.card}>
-          <Text style={styleCard.textAction}>Tarefa</Text>
-          <View style={styleCard.inputTextAndButtonField}>
-            <TextInput
-              style={styleCard.input}
-              onChangeText={onChangeTaskName}
-              value={taskName}
-              placeholder="Digite a Tarefa"
-            />
-          </View>
+        <ScrollView style={styles.styleScrollView}>
+          <View style={styleCard.card}>
+            <Text style={styleCard.textAction}>Tarefa</Text>
+            <View style={styleCard.inputTextAndButtonField}>
+              <TextInput
+                style={styleCard.input}
+                onChangeText={onChangeTaskName}
+                value={taskName}
+                placeholder="Digite a Tarefa"
+              />
+            </View>
 
-          <Text style={styleCard.textAction}>Categoria</Text>
-          <DropDownPicker
-            style={dropdownStyle.dropdown}
-            placeholderStyle={dropdownStyle.placeholderStyle}
-            dropDownContainerStyle={dropdownStyle.dropDownContainerStyle}
-            open={openDropDown}
-            value={taskValueDropdown}
-            placeholder="Selecione uma categoria"
-            items={taskItemsDropDown}
-            setOpen={setOpenDropdown}
-            setValue={setTaskValueDropDown}
-            setItems={setTaskItemsDropDown}
-          />
-
-          <View style={styleCard.buttonField}>
-            <Button
-              title="Criar"
-              color="#1499EF"
-              onPress={() => addTask()}
-              disabled={
-                taskName === "" || taskValueDropdown === null ? true : false
-              }
+            <Text style={styleCard.textAction}>Categoria</Text>
+            <DropDownPicker
+              style={dropdownStyle.dropdown}
+              placeholderStyle={dropdownStyle.placeholderStyle}
+              dropDownContainerStyle={dropdownStyle.dropDownContainerStyle}
+              open={openDropDown}
+              value={taskValueDropdown}
+              placeholder="Selecione uma categoria"
+              items={taskItemsDropDown}
+              setOpen={setOpenDropdown}
+              setValue={setTaskValueDropDown}
+              setItems={setTaskItemsDropDown}
             />
-          </View>
 
-          <View style={styleCard.buttonField}>
-            <Button
-              title="Voltar"
-              color="#F56D5B"
-              onPress={() => navigation.navigate("Tasks")}
-            />
+            <View style={styleCard.buttonField}>
+              <Button
+                title="Criar"
+                color="#1499EF"
+                onPress={() => addTask()}
+                disabled={
+                  taskName === "" || taskValueDropdown === null ? true : false
+                }
+              />
+            </View>
+
+            <View style={styleCard.buttonField}>
+              <Button
+                title="Voltar"
+                color="#F56D5B"
+                onPress={() => navigation.navigate("Tasks")}
+              />
+            </View>
           </View>
-        </View>
+        </ScrollView>
       </View>
     </View>
   );
@@ -93,6 +102,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     backgroundColor: "#FAF6F5",
+  },
+  styleScrollView: {
+    width: "100%",
   },
   todoField: {
     flex: 1,
