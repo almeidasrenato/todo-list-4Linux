@@ -8,7 +8,7 @@ import {
   FlatList,
   TouchableOpacity,
   KeyboardAvoidingView,
-  // Pressable
+  Alert,
 } from "react-native";
 
 import { SvgXml } from "react-native-svg";
@@ -42,7 +42,7 @@ function Tasks() {
       const jsonValue = JSON.stringify(value);
       await AsyncStorage.setItem("@taskList", jsonValue);
     } catch (e) {
-      // saving error
+      Alert.alert("Erro! Não foi possivel carregar suas tarefas.");
     }
   };
 
@@ -50,6 +50,7 @@ function Tasks() {
     const taskObject = {
       id: uuid.v4(),
       name: taskNameProp,
+      category: "",
       complete: false,
     };
 
