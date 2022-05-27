@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, TextInput, Button, Alert } from "react-native";
+import { StyleSheet, Text, View, TextInput, Button } from "react-native";
 
 import DropDownPicker from "react-native-dropdown-picker";
 
@@ -10,9 +10,9 @@ import uuid from "react-native-uuid";
 function AddTask() {
   const [taskName, onChangeTaskName] = React.useState("");
 
-  const [open, setOpen] = React.useState(false);
-  const [taskValue, setTaskValue] = React.useState(null);
-  const [taskItems, setTaskItems] = React.useState([
+  const [openDropDown, setOpenDropdown] = React.useState(false);
+  const [taskValueDropdown, setTaskValueDropDown] = React.useState(null);
+  const [taskItemsDropDown, setTaskItemsDropDown] = React.useState([
     { label: "Trabalho", value: "work" },
     { label: "Dia a dia", value: "day-to-day" },
     { label: "Importante", value: "important" },
@@ -26,7 +26,7 @@ function AddTask() {
     const taskObject = {
       id: uuid.v4(),
       name: taskName,
-      category: taskValue,
+      category: taskValueDropdown,
       complete: false,
     };
 
@@ -55,12 +55,13 @@ function AddTask() {
             style={dropdownStyle.dropdown}
             placeholderStyle={dropdownStyle.placeholderStyle}
             dropDownContainerStyle={dropdownStyle.dropDownContainerStyle}
-            open={open}
-            value={taskValue}
-            items={taskItems}
-            setOpen={setOpen}
-            setValue={setTaskValue}
-            setItems={setTaskItems}
+            open={openDropDown}
+            value={taskValueDropdown}
+            placeholder="Selecione uma categoria"
+            items={taskItemsDropDown}
+            setOpen={setOpenDropdown}
+            setValue={setTaskValueDropDown}
+            setItems={setTaskItemsDropDown}
           />
 
           <View style={styleCard.buttonField}>
@@ -68,7 +69,9 @@ function AddTask() {
               title="Criar"
               color="#1499EF"
               onPress={() => addTask()}
-              disabled={taskName === "" || taskValue === null ? true : false}
+              disabled={
+                taskName === "" || taskValueDropdown === null ? true : false
+              }
             />
           </View>
 
