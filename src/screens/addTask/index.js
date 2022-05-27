@@ -46,7 +46,7 @@ function AddTask() {
     <View style={styles.container}>
       <Text style={styleTitle.textTask}>{"Nova Tarefa"}</Text>
       <View style={styles.todoField}>
-        <ScrollView style={styles.styleScrollView}>
+        <ScrollView nestedScrollEnabled>
           <View style={styleCard.card}>
             <Text style={styleCard.textAction}>Tarefa</Text>
             <View style={styleCard.inputTextAndButtonField}>
@@ -128,6 +128,8 @@ const styleCard = StyleSheet.create({
   card: {
     backgroundColor: "#fff",
     width: "100%",
+    minHeight: 350,
+
     padding: 16,
 
     borderColor: "#C9C9C9",
@@ -181,6 +183,7 @@ const dropdownStyle = StyleSheet.create({
   dropDownContainerStyle: {
     backgroundColor: "#fff",
     borderColor: "#C9C9C9",
+    height: 150,
   },
 });
 
