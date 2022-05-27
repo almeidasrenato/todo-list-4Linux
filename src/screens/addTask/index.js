@@ -183,7 +183,7 @@ const dropdownStyle = StyleSheet.create({
   dropDownContainerStyle: {
     backgroundColor: "#fff",
     borderColor: "#C9C9C9",
-    height: 150,
+    height: 170,
   },
 });
 
