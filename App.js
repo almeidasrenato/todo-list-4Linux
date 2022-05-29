@@ -1,8 +1,8 @@
-import { StatusBar } from "expo-status-bar";
-import React from "react";
-import { StyleSheet, SafeAreaView, Platform } from "react-native";
+import { StatusBar } from "expo-status-bar"
+import React from "react"
+import { StyleSheet, SafeAreaView, Platform } from "react-native"
 
-import { AppRoutes } from "./src/routes";
+import { AppRoutes } from "./src/routes"
 
 export default function App() {
   return (
@@ -10,7 +10,7 @@ export default function App() {
       <StatusBar />
       <AppRoutes />
     </SafeAreaView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -19,4 +19,4 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: Platform.OS === "android" ? 28 : 0,
   },
-});
+})

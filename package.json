@@ -6,7 +6,9 @@
     "start": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "linter": "eslint 'src/**/*.{js,jsx}'",
+    "prettier": "prettier --write 'src/**/*.{js, jsx}'"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "~1.17.3",
@@ -26,7 +28,11 @@
     "react-native-web": "0.17.7"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9"
+    "@babel/core": "^7.12.9",
+    "eslint": "^8.16.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-react": "^7.30.0",
+    "prettier": "^2.6.2"
   },
   "private": true
 }

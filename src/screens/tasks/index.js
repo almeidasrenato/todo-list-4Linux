@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 import {
   StyleSheet,
   Text,
@@ -9,109 +9,109 @@ import {
   TouchableHighlight,
   KeyboardAvoidingView,
   Pressable,
-} from "react-native";
+} from 'react-native'
 
 import {
   addButton,
   removeIcon,
   checkBoxDisabledIcon,
   checkBoxEnabledIcon,
-} from "../../assets/svg";
+} from '../../assets/svg'
 
-import { SvgXml } from "react-native-svg";
-import DropDownPicker from "react-native-dropdown-picker";
+import { SvgXml } from 'react-native-svg'
+import DropDownPicker from 'react-native-dropdown-picker'
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation } from '@react-navigation/native'
 
 function Tasks({ route }) {
-  const [task, onChangeTask] = React.useState([]);
+  const [task, onChangeTask] = React.useState([])
 
-  const [openDropDown, setOpenDropdown] = React.useState(false);
-  const [taskValueDropdown, setTaskValueDropDown] = React.useState("all");
+  const [openDropDown, setOpenDropdown] = React.useState(false)
+  const [taskValueDropdown, setTaskValueDropDown] = React.useState('all')
   const [taskItemsDropDown, setTaskItemsDropDown] = React.useState([
-    { label: "Todas Categorias", value: "all" },
-    { label: "Trabalho", value: "work" },
-    { label: "Dia a dia", value: "day-to-day" },
-    { label: "Importante", value: "important" },
-    { label: "Prioridade", value: "priority" },
-    { label: "Normal", value: "normal" },
-  ]);
+    { label: 'Todas Categorias', value: 'all' },
+    { label: 'Trabalho', value: 'work' },
+    { label: 'Dia a dia', value: 'day-to-day' },
+    { label: 'Importante', value: 'important' },
+    { label: 'Prioridade', value: 'priority' },
+    { label: 'Normal', value: 'normal' },
+  ])
 
-  const [statusTaskFilter, onChangeStatusTaskFilter] = React.useState("all");
+  const [statusTaskFilter, onChangeStatusTaskFilter] = React.useState('all')
 
-  const navigation = useNavigation();
+  const navigation = useNavigation()
 
   React.useEffect(() => {
-    getTasksData();
-  }, []);
+    getTasksData()
+  }, [])
 
   const getTasksData = async () => {
-    const jsonValue = await AsyncStorage.getItem("@taskList");
+    const jsonValue = await AsyncStorage.getItem('@taskList')
 
-    return onChangeTask(jsonValue != null ? JSON.parse(jsonValue) : []);
-  };
+    return onChangeTask(jsonValue != null ? JSON.parse(jsonValue) : [])
+  }
 
   const storeTaskData = async (value) => {
     try {
-      const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem("@taskList", jsonValue);
+      const jsonValue = JSON.stringify(value)
+      await AsyncStorage.setItem('@taskList', jsonValue)
     } catch (e) {
       // saving error
     }
-  };
+  }
 
   const addTask = async (taskObject) => {
-    onChangeTask([...task, taskObject]);
+    onChangeTask([...task, taskObject])
 
-    return await storeTaskData([...task, taskObject]);
-  };
+    return await storeTaskData([...task, taskObject])
+  }
 
   const removeTask = async (taskId) => {
-    const newTaskList = task.filter((item) => item.id !== taskId);
+    const newTaskList = task.filter((item) => item.id !== taskId)
 
-    onChangeTask(newTaskList);
+    onChangeTask(newTaskList)
 
-    await storeTaskData(newTaskList);
-  };
+    await storeTaskData(newTaskList)
+  }
 
   const changeStatusTask = async (taskId) => {
     const newTaskList = task.map((item) => ({
       ...item,
       complete: taskId === item.id ? !item.complete : item.complete,
-    }));
+    }))
 
-    onChangeTask(newTaskList);
-    await storeTaskData(newTaskList);
-  };
+    onChangeTask(newTaskList)
+    await storeTaskData(newTaskList)
+  }
 
   if (route.params) {
-    addTask(route.params.newTask);
-    route.params = undefined;
+    addTask(route.params.newTask)
+    route.params = undefined
   }
 
   const returnTaskByFilter = () => {
-    let newTaskListRender = task;
+    let newTaskListRender = task
 
-    if (statusTaskFilter !== "all") {
-      if (statusTaskFilter === "complete") {
-        newTaskListRender = task.filter((obj) => obj.complete === true);
+    if (statusTaskFilter !== 'all') {
+      if (statusTaskFilter === 'complete') {
+        newTaskListRender = task.filter((obj) => obj.complete === true)
       }
 
-      if (statusTaskFilter === "incomplete") {
-        newTaskListRender = task.filter((obj) => obj.complete === false);
+      if (statusTaskFilter === 'incomplete') {
+        newTaskListRender = task.filter((obj) => obj.complete === false)
       }
     }
 
-    if (taskValueDropdown !== "all") {
+    if (taskValueDropdown !== 'all') {
       newTaskListRender = newTaskListRender.filter(
         (obj) => obj.category === taskValueDropdown
-      );
+      )
     }
 
-    return newTaskListRender;
-  };
+    return newTaskListRender
+  }
 
   const renderTaskListCard = ({ item }) => (
     <TouchableOpacity onPress={() => changeStatusTask(item.id)}>
@@ -133,15 +133,15 @@ function Tasks({ route }) {
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
-  );
+  )
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : ""}
+      behavior={Platform.OS === 'ios' ? 'padding' : ''}
       style={{ flex: 1 }}
     >
       <View style={styles.todoField}>
-        <Text style={styleTitle.textTask}>{"Tarefas"}</Text>
+        <Text style={styleTitle.textTask}>{'Tarefas'}</Text>
 
         <DropDownPicker
           style={styleDropdown.dropdown}
@@ -158,33 +158,33 @@ function Tasks({ route }) {
         <View style={styleButtonsFilter.customButtonsField}>
           <Pressable
             style={
-              statusTaskFilter === "all"
+              statusTaskFilter === 'all'
                 ? styleButtonsFilter.customButtonSelected
                 : styleButtonsFilter.customButtonUnselected
             }
-            onPress={() => onChangeStatusTaskFilter("all")}
+            onPress={() => onChangeStatusTaskFilter('all')}
           >
             <Text>Todas</Text>
           </Pressable>
 
           <Pressable
             style={
-              statusTaskFilter === "complete"
+              statusTaskFilter === 'complete'
                 ? styleButtonsFilter.customButtonSelected
                 : styleButtonsFilter.customButtonUnselected
             }
-            onPress={() => onChangeStatusTaskFilter("complete")}
+            onPress={() => onChangeStatusTaskFilter('complete')}
           >
             <Text>Completas</Text>
           </Pressable>
 
           <Pressable
             style={
-              statusTaskFilter === "incomplete"
+              statusTaskFilter === 'incomplete'
                 ? styleButtonsFilter.customButtonSelected
                 : styleButtonsFilter.customButtonUnselected
             }
-            onPress={() => onChangeStatusTaskFilter("incomplete")}
+            onPress={() => onChangeStatusTaskFilter('incomplete')}
           >
             <Text>Incompletas</Text>
           </Pressable>
@@ -203,45 +203,45 @@ function Tasks({ route }) {
             style={styleAddTaskButton.button}
             activeOpacity={0.6}
             underlayColor="#DDDDDD"
-            onPress={() => navigation.navigate("AddTask")}
+            onPress={() => navigation.navigate('AddTask')}
           >
             <SvgXml xml={addButton()} width="48" height="48" />
           </TouchableHighlight>
         </View>
       </View>
     </KeyboardAvoidingView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   todoField: {
     paddingLeft: 32,
     paddingRight: 32,
-    alignItems: "center",
+    alignItems: 'center',
     flex: 1,
-    width: "100%",
-    backgroundColor: "#FAF6F5",
+    width: '100%',
+    backgroundColor: '#FAF6F5',
   },
-});
+})
 
 const styleTitle = StyleSheet.create({
   textTask: {
-    color: "#3E536B",
+    color: '#3E536B',
     fontSize: 34,
-    fontWeight: "500",
+    fontWeight: '500',
     padding: 4,
     paddingTop: 16,
     paddingBottom: 16,
   },
-});
+})
 
 const styleDropdown = StyleSheet.create({
   dropdown: {
-    backgroundColor: "#fff",
-    borderColor: "#C9C9C9",
+    backgroundColor: '#fff',
+    borderColor: '#C9C9C9',
     borderRadius: 8,
 
-    shadowColor: "#000000",
+    shadowColor: '#000000',
     shadowOffset: {
       width: 0,
       height: 3,
@@ -251,25 +251,25 @@ const styleDropdown = StyleSheet.create({
     elevation: 4,
   },
   placeholderStyle: {
-    color: "#878787",
+    color: '#878787',
   },
   dropDownContainerStyle: {
-    backgroundColor: "#fff",
-    borderColor: "#C9C9C9",
+    backgroundColor: '#fff',
+    borderColor: '#C9C9C9',
   },
-});
+})
 
 const styleButtonsFilter = StyleSheet.create({
   customButtonsField: {
-    flexDirection: "row",
-    width: "100%",
+    flexDirection: 'row',
+    width: '100%',
     marginTop: 16,
     paddingTop: 4,
     paddingBottom: 4,
   },
 
   customButtonSelected: {
-    backgroundColor: "#F56D5B",
+    backgroundColor: '#F56D5B',
 
     paddingTop: 4,
     paddingBottom: 4,
@@ -277,7 +277,7 @@ const styleButtonsFilter = StyleSheet.create({
     paddingRight: 4,
 
     borderRadius: 8,
-    borderColor: "#F56D5B",
+    borderColor: '#F56D5B',
     borderWidth: 1,
     marginRight: 8,
   },
@@ -288,53 +288,53 @@ const styleButtonsFilter = StyleSheet.create({
     paddingRight: 4,
 
     borderRadius: 8,
-    borderColor: "#878787",
+    borderColor: '#878787',
     borderWidth: 1,
     marginRight: 8,
   },
-});
+})
 
 const styleTaskList = StyleSheet.create({
   taskListField: {
     flex: 1,
-    width: "100%",
+    width: '100%',
   },
   taskCard: {
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderColor: "#C9C9C9",
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderColor: '#C9C9C9',
     borderRadius: 8,
     borderWidth: 1,
-    flexDirection: "row",
+    flexDirection: 'row',
     marginTop: 10,
     minHeight: 60,
     padding: 10,
-    width: "100%",
+    width: '100%',
   },
   titleTaskCard: {
-    color: "#3E536B",
+    color: '#3E536B',
     flex: 1,
     paddingLeft: 8,
   },
   titleTaskCardLine: {
-    color: "#3E536B",
+    color: '#3E536B',
     flex: 1,
     paddingLeft: 8,
-    textDecorationColor: "#000",
-    textDecorationLine: "line-through",
-    textDecorationStyle: "solid",
+    textDecorationColor: '#000',
+    textDecorationLine: 'line-through',
+    textDecorationStyle: 'solid',
   },
-});
+})
 
 const styleAddTaskButton = StyleSheet.create({
   button: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     borderRadius: 48 / 2,
-    position: "absolute",
+    position: 'absolute',
     bottom: 16,
     right: 16,
 
-    shadowColor: "#000000",
+    shadowColor: '#000000',
     shadowOffset: {
       width: 0,
       height: 3,
@@ -343,6 +343,6 @@ const styleAddTaskButton = StyleSheet.create({
     shadowRadius: 3.05,
     elevation: 4,
   },
-});
+})
 
-export default Tasks;
+export default Tasks
