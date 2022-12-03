@@ -59,6 +59,7 @@ function AddTask() {
                         </View>
 
                         <Text style={styleCard.textAction}>Categoria</Text>
+
                         <DropDownPicker
                             style={dropdownStyle.dropdown}
                             placeholderStyle={dropdownStyle.placeholderStyle}
@@ -72,6 +73,7 @@ function AddTask() {
                             setOpen={setOpenDropdown}
                             setValue={setTaskValueDropDown}
                             setItems={setTaskItemsDropDown}
+                            listMode="SCROLLVIEW"
                         />
 
                         <View style={styleCard.buttonField}>
@@ -181,6 +183,7 @@ const dropdownStyle = StyleSheet.create({
         backgroundColor: '#fff',
         borderColor: '#C9C9C9',
         borderRadius: 4,
+        marginTop: 8,
     },
     placeholderStyle: {
         color: '#878787',

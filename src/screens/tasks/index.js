@@ -164,6 +164,7 @@ function Tasks({ route }) {
                     setOpen={setOpenDropdown}
                     setValue={setTaskValueDropDown}
                     setItems={setTaskItemsDropDown}
+                    listMode="SCROLLVIEW"
                 />
 
                 <View style={styleButtonsFilter.customButtonsField}>
